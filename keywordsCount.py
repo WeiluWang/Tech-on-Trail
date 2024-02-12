@@ -11,16 +11,24 @@ keywords = [
 ]
 
 # Function to count keywords in the text
-def count_keywords(text):
-    # Create a counter for the keywords
-    keyword_counter = Counter()
+# def count_keywords(text):
+#     # Create a counter for the keywords
+#     keyword_counter = Counter()
     
-    # For each keyword, check if it's in the text and count the appearances
+#     # For each keyword, check if it's in the text and count the appearances
+#     for keyword in keywords:
+#         count = text.lower().count(keyword.lower())
+#         if count > 0:
+#             keyword_counter[keyword] = count
+#     return keyword_counter
+# Function to check keyword presence in the text, counting once only
+def check_keyword_presence(text):
+    keyword_presence = {keyword: 0 for keyword in keywords}
+    text_lower = text.lower()
     for keyword in keywords:
-        count = text.lower().count(keyword.lower())
-        if count > 0:
-            keyword_counter[keyword] = count
-    return keyword_counter
+        if keyword.lower() in text_lower:
+            keyword_presence[keyword] = 1
+    return keyword_presence
 # Function to print total counts of each keyword
 def print_total_keyword_counts(df):
     total_keyword_counts = Counter()
@@ -75,10 +83,14 @@ except UnicodeDecodeError:
 df = df[df['Journal Story'].apply(lambda x: isinstance(x, str))]
 
 # Apply the function to the 'journal' column and create a new 'keyword' column
-df['keyword'] = df['Journal Story'].apply(lambda text: count_keywords(text))
+# df['keyword'] = df['Journal Story'].apply(lambda text: count_keywords(text))
 
 # Convert the Counter objects in 'keyword' column to string
-df['keyword'] = df['keyword'].apply(lambda x: '; '.join([f'{k}: {v}' for k, v in x.items()]))
+# df['keyword'] = df['keyword'].apply(lambda x: '; '.join([f'{k}: {v}' for k, v in x.items()]))
+# Apply the function to check keyword presence in the 'Journal Story' column
+df['keyword_presence'] = df['Journal Story'].apply(lambda text: check_keyword_presence(text))
+# Convert the 'keyword_presence' dictionary to a string for storage
+df['keyword_presence'] = df['keyword_presence'].apply(lambda x: '; '.join([f'{k}: {v}' for k, v in x.items()]))
 
 # Save the modified DataFrame to a new CSV file
 df.to_csv('temp_journal_with_keywords.csv', index=False)
