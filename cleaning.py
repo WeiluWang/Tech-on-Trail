@@ -1,10 +1,12 @@
 import pandas as pd
 import nltk
-
-
+from langdetect import detect, DetectorFactory
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer, WordNetLemmatizer
 from nltk.tokenize import word_tokenize
+
+# Ensure reproducibility in langdetect
+DetectorFactory.seed = 0
 
 # Ensure you have the necessary NLTK data
 nltk.download('punkt')
@@ -12,10 +14,20 @@ nltk.download('stopwords')
 nltk.download('wordnet')
 nltk.download('omw-1.4')
 
+def is_english(text):
+    try:
+        return detect(text) == 'en'
+    except:
+        return False
+
 def clean_text(text):
     if not isinstance(text, str):
-        return ''  # Return an empty string or some default text if needed
+        return ''
     
+    # Check if the text is in English
+    if not is_english(text):
+        return ''  # Return an empty string or some default text if the text is not English
+
     # Tokenize the text
     tokens = word_tokenize(text)
     
@@ -37,8 +49,7 @@ def clean_text(text):
     return cleaned_text
 
 # Load the CSV file
-df = pd.read_csv('data.csv', dtype={'Journal Story': str}, encoding='Windows-1252')  # Try Windows-1252 encoding
-
+df = pd.read_csv('data.csv', dtype={'Journal Story': str}, encoding='Windows-1252') 
 
 # Clean the data
 df['cleaned data'] = df['Journal Story'].apply(clean_text)
