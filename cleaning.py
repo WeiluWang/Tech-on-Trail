@@ -4,6 +4,7 @@ from langdetect import detect, DetectorFactory
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer, WordNetLemmatizer
 from nltk.tokenize import word_tokenize
+import string
 
 # Ensure reproducibility in langdetect
 DetectorFactory.seed = 0
@@ -20,19 +21,18 @@ def is_english(text):
     except:
         return False
 
-def clean_text(text):
+def clean_text_with_custom_stopwords(text, additional_stop_words):
     if not isinstance(text, str):
         return ''
     
-    # Check if the text is in English
-    if not is_english(text):
-        return ''  # Return an empty string or some default text if the text is not English
-
     # Tokenize the text
     tokens = word_tokenize(text)
+
+    # Remove punctuation
+    tokens = [word for word in tokens if word.isalpha()]
     
-    # Remove stopwords
-    stop_words = set(stopwords.words('english'))
+    # Extend the stopwords list with additional words
+    stop_words = set(stopwords.words('english')).union(additional_stop_words)
     filtered_tokens = [word for word in tokens if word.lower() not in stop_words]
     
     # Apply stemming
@@ -40,19 +40,25 @@ def clean_text(text):
     stemmed_tokens = [stemmer.stem(word) for word in filtered_tokens]
     
     # Apply lemmatization
-    lemmatizer = WordNetLemmatizer()
-    lemmatized_tokens = [lemmatizer.lemmatize(word) for word in stemmed_tokens]
+    #lemmatizer = WordNetLemmatizer()
+    #lemmatized_tokens = [lemmatizer.lemmatize(word) for word in stemmed_tokens]
     
     # Join the tokens back into a string
-    cleaned_text = ' '.join(lemmatized_tokens)
+    cleaned_text = ' '.join(stemmed_tokens)
     
     return cleaned_text
+
+# Additional stop words specified by you
+additional_stop_words = {"trail", "climb", "year", "get", "could", "would", "can", "will", "today", "day"}
 
 # Load the CSV file
 df = pd.read_csv('data.csv', dtype={'Journal Story': str}, encoding='Windows-1252') 
 
-# Clean the data
-df['cleaned data'] = df['Journal Story'].apply(clean_text)
+# Assuming you have the CSV file loaded in df
+df['cleaned data'] = df['Journal Story'].apply(lambda x: clean_text_with_custom_stopwords(x, additional_stop_words))
 
 # Save the new DataFrame to a CSV file
-df[['Journal Story', 'cleaned data']].to_csv('results.csv', index=False)
+df[['Journal Story', 'cleaned data']].to_csv('results_with_custom_stopwords.csv', index=False)
+
+
+
