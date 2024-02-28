@@ -49,7 +49,7 @@ def clean_text_with_custom_stopwords(text, additional_stop_words):
     return cleaned_text
 
 # Additional stop words specified by you
-additional_stop_words = {"trail", "climb", "year", "get", "could", "would", "can", "will", "today", "day"}
+additional_stop_words = {"trail", "climb", "year", "get", "could", "would", "can", "will", "today", "day", "time", "back", "got", "mile", "one", "start", "hike"}
 
 # Load the CSV file
 df = pd.read_csv('data.csv', dtype={'Journal Story': str}, encoding='Windows-1252') 
