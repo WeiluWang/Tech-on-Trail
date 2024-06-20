@@ -9,7 +9,7 @@ with open('hiker_trail_names.json', 'r') as json_file:
 hiker_names = hiker_data["Hiker trail names"]
 
 # Load the CSV file
-df = pd.read_csv('test.csv')
+df = pd.read_csv('2018_hiker_journal.csv')
 
 # Create a dictionary to store the frequency count
 hiker_connections = defaultdict(dict)
@@ -27,7 +27,7 @@ for hiker in hiker_names:
             hiker_connections[hiker][other_hiker] += entry.lower().count(other_hiker.lower())
 
 # Save the results to a new JSON file
-with open('hiker_connections.json', 'w') as json_file:
+with open('hiker_connections_2018.json', 'w') as json_file:
     json.dump(hiker_connections, json_file, indent=4)
 
 print("Hiker connections JSON file created successfully!")

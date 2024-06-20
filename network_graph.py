@@ -2,7 +2,7 @@ import json
 from pyvis.network import Network
 
 # Load the data from a JSON file
-with open('hiker_connections.json', 'r') as f:
+with open('hiker_connections_2018.json', 'r') as f:
     data = json.load(f)
 
 # Create a Pyvis Network with remote resources for compatibility
